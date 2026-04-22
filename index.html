@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JOMP — Asisten Pribadi 24/7 via WhatsApp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0A0A0A;
+      --bg2:     #111111;
+      --card:    #1A1A1A;
+      --border:  #262626;
+      --green:    #25D366;
+      --green-bright: #3FD97F;
+      --green-dim: #128C7E;
+      --steel:   #6B7280;
+      --slate:   #94A3B8;
+      --slate2:  #334155;
+      --text:    #F0F0F0;
+      --sub:     #888888;
+      --sub2:    #333333;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-size: 1.38rem; font-weight: 800; letter-spacing: -0.5px; }
+    .nav-logo span { color: var(--green-bright); }
+    .nav-cta {
+      background: var(--green); color: #000;
+      padding: 9px 22px; border-radius: 8px;
+      font-weight: 700; font-size: 0.85rem;
+      text-decoration: none; transition: all .2s;
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .nav-cta:hover { background: var(--green-dim); transform: translateY(-1px); }
+
+    /* WA SVG icon reusable */
+    .wa-icon { display: inline-flex; align-items: center; flex-shrink: 0; }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 130px 24px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -300px; left: 50%; transform: translateX(-50%);
+      width: 1100px; height: 1100px;
+      background: radial-gradient(circle, rgba(37,211,102,0.10) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 220px;
+      background: linear-gradient(to bottom, transparent, var(--bg));
+      pointer-events: none;
+    }
+    /* Diagonal steel stripe accent */
+    .hero-stripe {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        -55deg,
+        rgba(37,211,102,0.025) 0px,
+        rgba(37,211,102,0.025) 1px,
+        transparent 1px,
+        transparent 60px
+      );
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(37,211,102,0.10);
+      border: 1px solid rgba(37,211,102,0.28);
+      color: var(--green-bright);
+      padding: 6px 16px; border-radius: 100px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 1px;
+      margin-bottom: 32px; text-transform: uppercase;
+      position: relative; z-index: 1;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green-bright); animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
+
+    .hero-pain {
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      color: var(--sub);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin-bottom: 28px;
+      font-style: italic;
+      position: relative; z-index: 1;
+    }
+    .hero-pain span { color: #F87171; }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 22px;
+      max-width: 820px;
+      position: relative; z-index: 1;
+    }
+    .hero h1 .g { color: var(--green-bright); }
+    .hero h1 .dim { color: var(--sub); font-weight: 600; }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.2vw, 1.15rem);
+      color: var(--sub);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      position: relative; z-index: 1;
+    }
+
+    .hero-btns {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 64px;
+      position: relative; z-index: 1;
+    }
+    .btn-primary {
+      background: var(--green); color: #000;
+      padding: 14px 30px; border-radius: 10px;
+      font-weight: 800; font-size: 0.95rem;
+      text-decoration: none; transition: all .2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--green-bright); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(37,211,102,0.40); }
+    .btn-ghost {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--sub); padding: 14px 30px; border-radius: 10px;
+      font-weight: 600; font-size: 0.95rem;
+      text-decoration: none; transition: all .2s;
+    }
+    .btn-ghost:hover { border-color: var(--steel); color: var(--text); }
+
+    .hero-proof {
+      display: flex; gap: 32px; flex-wrap: wrap; justify-content: center;
+      position: relative; z-index: 1;
+    }
+    .proof-item { text-align: center; }
+    .proof-num { font-size: 1.8rem; font-weight: 800; letter-spacing: -1.5px; }
+    .proof-num .g { color: var(--green-bright); }
+    .proof-label { font-size: 0.72rem; color: var(--sub); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ─── SECTION BASE ─── */
+    section { padding: 96px 24px; }
+    .container { max-width: 1080px; margin: 0 auto; }
+    .s-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--green-bright); margin-bottom: 10px; }
+    .s-title { font-size: clamp(1.7rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -1.2px; line-height: 1.15; margin-bottom: 12px; }
+    .s-sub { color: var(--sub); font-size: 0.98rem; margin-bottom: 48px; max-width: 480px; }
+
+    /* ─── PAIN ─── */
+    .pain-section { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .pain-center { text-align: center; }
+    .pain-center .s-sub { margin: 0 auto 48px; }
+
+    .pain-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px; margin-bottom: 48px;
+    }
+    .pain-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px;
+      transition: border-color .2s, transform .2s;
+    }
+    .pain-card:hover { border-color: rgba(37,211,102,0.22); transform: translateY(-2px); }
+    .pain-card .pain-icon { font-size: 1.6rem; margin-bottom: 12px; display: block; }
+    .pain-card h3 { font-size: 0.92rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .pain-card p { font-size: 0.82rem; color: var(--sub); line-height: 1.65; }
+
+    .pain-vs {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center;
+    }
+    .vs-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+    }
+    .vs-box.bad { border-color: rgba(248,113,113,0.2); }
+    .vs-box.good { border-color: rgba(37,211,102,0.25); }
+    .vs-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+    .vs-box.bad .vs-title { color: #F87171; }
+    .vs-box.good .vs-title { color: var(--green-bright); }
+    .vs-list { display: flex; flex-direction: column; gap: 10px; }
+    .vs-item { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; color: var(--sub); }
+    .vs-item .icon { flex-shrink: 0; }
+    .vs-divider { text-align: center; font-size: 1.5rem; color: var(--sub2); font-weight: 800; }
+
+    /* ─── TRUST ─── */
+    .trust-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .trust-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px;
+      transition: border-color .2s, transform .2s;
+    }
+    .trust-card:hover { transform: translateY(-3px); border-color: rgba(37,211,102,0.28); }
+    .trust-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
+    .trust-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .trust-card p { font-size: 0.85rem; color: var(--sub); line-height: 1.65; }
+    .trust-tag {
+      display: inline-block; margin-top: 14px;
+      background: rgba(37,211,102,0.08); border: 1px solid rgba(37,211,102,0.22);
+      color: var(--green-bright); font-size: 0.7rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 100px; letter-spacing: 0.5px;
+    }
+
+    /* ─── FEATURES ─── */
+    .feat-section { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .feat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 30px; position: relative; overflow: hidden;
+      transition: transform .2s, border-color .2s;
+    }
+    .feat-card:hover { transform: translateY(-3px); }
+    .feat-card.live { border-color: rgba(37,211,102,0.28); }
+    .feat-card.live:hover { border-color: rgba(90,163,255,0.50); }
+    .feat-card.soon { opacity: 0.7; }
+    .feat-card.soon:hover { opacity: 1; border-color: rgba(148,163,184,0.30); }
+    .feat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    }
+    .feat-card.live::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+    .feat-card.soon::before { background: linear-gradient(90deg, transparent, var(--steel), transparent); }
+    .feat-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 100px; margin-bottom: 16px;
+    }
+    .badge-live { background: rgba(37,211,102,0.12); color: var(--green-bright); border: 1px solid rgba(37,211,102,0.30); }
+    .badge-soon { background: rgba(100,116,139,0.12); color: var(--slate); border: 1px solid rgba(100,116,139,0.30); }
+    .feat-emoji { font-size: 2rem; display: block; margin-bottom: 12px; }
+    .feat-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+    .feat-card p { font-size: 0.85rem; color: var(--sub); line-height: 1.65; margin-bottom: 18px; }
+    .feat-examples { display: flex; flex-direction: column; gap: 7px; }
+    .feat-ex {
+      background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 12px;
+      font-size: 0.76rem; color: var(--sub); font-family: monospace;
+    }
+    .feat-ex::before { content: '💬 '; }
+
+    /* ─── HOW IT WORKS ─── */
+    .how-wrap {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+    }
+    .how-steps { display: flex; flex-direction: column; gap: 24px; }
+    .how-step { display: flex; gap: 18px; align-items: flex-start; }
+    .step-n {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(37,211,102,0.10); border: 1px solid rgba(37,211,102,0.30);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 800; color: var(--green-bright);
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .how-step h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .how-step p { font-size: 0.83rem; color: var(--sub); }
+
+    /* ─── WA MOCKUP ─── */
+    .wa-mockup {
+      background: #0A0A0A; border: 1px solid rgba(37,211,102,0.15);
+      border-radius: 24px; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 40px rgba(37,211,102,0.06);
+    }
+    .wa-top {
+      background: #128C7E; padding: 14px 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .wa-av {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; font-weight: 900; color: #fff;
+    }
+    .wa-nm { font-size: 0.88rem; font-weight: 700; color: #fff; }
+    .wa-st { font-size: 0.7rem; color: rgba(255,255,255,0.75); }
+    .wa-bg {
+      background: #0A0A0A url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2325D366' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .wa-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .bbl { padding: 10px 14px; border-radius: 12px; font-size: 0.8rem; line-height: 1.55; max-width: 88%; }
+    .bbl-out { background: #1F5C38; align-self: flex-end; border-bottom-right-radius: 3px; color: #E8F5E9; }
+    .bbl-in { background: #1A1A1A; align-self: flex-start; border-bottom-left-radius: 3px; color: #E8EDF5; }
+    .bbl-t { font-size: 0.62rem; color: rgba(255,255,255,0.35); text-align: right; margin-top: 3px; }
+
+    /* ─── FORM ─── */
+    .form-section { background: var(--bg2); border-top: 1px solid var(--border); }
+    .form-center { max-width: 640px; margin: 0 auto; }
+    .form-head { text-align: center; margin-bottom: 40px; }
+    .form-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 24px; padding: 40px;
+    }
+    .f-row { margin-bottom: 20px; }
+    .f-row label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--sub); margin-bottom: 7px; }
+    .f-row label .r { color: var(--green-bright); }
+    .f-row input, .f-row select, .f-row textarea {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 16px;
+      color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem; transition: border-color .2s; outline: none;
+    }
+    .f-row input:focus, .f-row select:focus, .f-row textarea:focus {
+      border-color: rgba(37,211,102,0.50);
+      box-shadow: 0 0 0 3px rgba(37,211,102,0.08);
+    }
+    .f-row select option { background: #102030; }
+    .f-row textarea { resize: vertical; min-height: 88px; }
+    .check-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .c-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px;
+      cursor: pointer; transition: border-color .2s, background .2s;
+      user-select: none;
+    }
+    .c-item:hover { border-color: var(--sub2); }
+    .c-item input[type="checkbox"] { display: none; }
+    .c-item.on { border-color: rgba(37,211,102,0.45); background: rgba(37,211,102,0.06); }
+    .c-box {
+      width: 18px; height: 18px; border-radius: 5px;
+      border: 2px solid var(--border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .c-item.on .c-box { background: var(--green); border-color: var(--green); }
+    .c-item.on .c-box::after { content: '✓'; color: #fff; font-size: 0.65rem; font-weight: 900; }
+    .c-lbl { font-size: 0.82rem; font-weight: 500; }
+    .f-submit {
+      width: 100%; background: var(--green); color: #000;
+      border: none; border-radius: 12px; padding: 16px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem; font-weight: 800;
+      cursor: pointer; transition: all .2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 8px;
+    }
+    .f-submit:hover { background: var(--green-bright); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(37,211,102,0.35); }
+    .f-note { text-align: center; font-size: 0.76rem; color: var(--sub); margin-top: 14px; }
+
+    /* ─── SUCCESS ─── */
+    .success-state { display: none; text-align: center; padding: 16px 0; }
+    .s-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
+    .success-state h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+    .success-state p { color: var(--sub); font-size: 0.88rem; margin-bottom: 24px; }
+    .wa-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green); color: #000;
+      padding: 14px 28px; border-radius: 10px;
+      font-weight: 800; font-size: 0.95rem;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .wa-link:hover { opacity: 0.85; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center; padding: 48px 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-logo { font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
+    .footer-logo span { color: var(--green-bright); }
+    footer p { color: var(--sub2); font-size: 0.78rem; line-height: 1.8; }
+    footer strong { color: var(--sub); }
+
+    /* ─── FADE ANIMATION ─── */
+    .fu { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+    .fu.vis { opacity: 1; transform: translateY(0); }
+
+    /* ─── DIVIDER LINE ─── */
+    .section-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      opacity: 0.25;
+    }
+
+    @media (max-width: 768px) {
+      .how-wrap { grid-template-columns: 1fr; }
+      .wa-mockup { display: none; }
+      .check-group, .pain-vs { grid-template-columns: 1fr; }
+      .vs-divider { display: none; }
+      nav { padding: 14px 20px; }
+      .form-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    JOMP<span> AI</span>
+  </div>
+  <a href="#daftar" class="nav-cta">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Akses Beta →
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-stripe"></div>
+
+  <div class="hero-badge">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Akses Beta Terbatas · 20 Pengguna Pertama
+    <span class="badge-dot"></span>
+  </div>
+
+  <div class="hero-pain fu">
+    <span>"Punya banyak apps untuk produktivitas, tapi akhirnya nggak dipake."</span>
+  </div>
+
+  <h1 class="fu">
+    Satu WA.<br/>
+    <span class="g">Semua Terurus.</span><br/>
+    <span class="dim">Tanpa Drama.</span>
+  </h1>
+
+  <p class="hero-sub fu">
+    JOMP adalah asisten pribadi 24/7 yang hidup langsung di
+    <svg style="display:inline;vertical-align:middle;margin: 0 2px;" width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <strong style="color:#25D366">WhatsApp</strong>-mu. Tidak ada app baru. Tidak ada setup rumit. Cukup chat seperti biasa, beres.
+  </p>
+
+  <div class="hero-btns fu">
+    <a href="#daftar" class="btn-primary">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Daftar Gratis Sekarang
+    </a>
+    <a href="#fitur" class="btn-ghost">Lihat Cara Kerja →</a>
+  </div>
+
+  <div class="hero-proof fu">
+    <div class="proof-item">
+      <div class="proof-num">24<span class="g">/7</span></div>
+      <div class="proof-label">Selalu Standby</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-num"><span class="g">0</span></div>
+      <div class="proof-label">App Baru</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-num"><span class="g">&lt;5</span>dtk</div>
+      <div class="proof-label">Catat Sesuatu</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-num"><span class="g">100</span>%</div>
+      <div class="proof-label">Data Milikmu</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PAIN -->
+<section class="pain-section">
+  <div class="container">
+    <div class="pain-center">
+      <p class="s-label fu">Masalah yang Nyata</p>
+      <h2 class="s-title fu">Produktivitas harusnya meringankan,<br/>bukan menambah beban</h2>
+      <p class="s-sub fu">Kamu bukan malas. Kamu cuma overwhelmed dengan tools yang seharusnya membantumu.</p>
+    </div>
+
+    <div class="pain-grid">
+      <div class="pain-card fu">
+        <span class="pain-icon">🌀</span>
+        <h3>Pindah-pindah Apps, Waktu Habis</h3>
+        <p>Buka Notion, cek Trello, lihat Google Tasks, buka Calendar, buka Notes — belum mulai kerja pun sudah capek duluan.</p>
+      </div>
+      <div class="pain-card fu">
+        <span class="pain-icon">💸</span>
+        <h3>Bayar Banyak, Pakai Sedikit</h3>
+        <p>Berlangganan 3–5 apps produktivitas, tapi 60 hari kemudian semua terbengkalai. Uang keluar, kebiasaan tidak terbentuk.</p>
+      </div>
+      <div class="pain-card fu">
+        <span class="pain-icon">🧠</span>
+        <h3>Setup Dulu, Belajar Dulu</h3>
+        <p>Setiap app baru minta waktu belajar, setup workspace, buat template. Padahal kamu mau langsung kerja, bukan belajar tools.</p>
+      </div>
+      <div class="pain-card fu">
+        <span class="pain-icon">📱</span>
+        <h3>WA Dibuka, Apps Lain Tidak</h3>
+        <p>Kenyataannya: WA sudah dibuka 80–100x sehari. Semua info penting datang dari sini. Kenapa tidak sekalian kelola hidupmu dari sini?</p>
+      </div>
+    </div>
+
+    <div class="pain-vs fu">
+      <div class="vs-box bad">
+        <div class="vs-title">❌ Tanpa JOMP</div>
+        <div class="vs-list">
+          <div class="vs-item"><span class="icon">🔴</span> Ide muncul, tidak sempat catat, hilang</div>
+          <div class="vs-item"><span class="icon">🔴</span> Task numpuk, tidak tahu mana yang urgent</div>
+          <div class="vs-item"><span class="icon">🔴</span> Lupa ada meeting sampai 5 menit sebelumnya</div>
+          <div class="vs-item"><span class="icon">🔴</span> Buka 5 apps, produktivitas nol</div>
+          <div class="vs-item"><span class="icon">🔴</span> Malam hari tidak tahu sudah ngapain seharian</div>
+        </div>
+      </div>
+      <div class="vs-divider">VS</div>
+      <div class="vs-box good">
+        <div class="vs-title">✅ Dengan JOMP</div>
+        <div class="vs-list">
+          <div class="vs-item"><span class="icon">🔵</span> Ide langsung tercatat, terkategori, mudah dicari</div>
+          <div class="vs-item"><span class="icon">🔵</span> Pagi dapat digest: task urgent + agenda hari ini</div>
+          <div class="vs-item"><span class="icon">🔵</span> Reminder otomatis H-1 dan 1 jam sebelum event</div>
+          <div class="vs-item"><span class="icon">🔵</span> Satu WA, semua beres</div>
+          <div class="vs-item"><span class="icon">🔵</span> Malam tahu persis apa yang sudah dan belum selesai</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- TRUST / SECURITY -->
+<section>
+  <div class="container">
+    <p class="s-label fu">Keamanan & Privasi</p>
+    <h2 class="s-title fu">Data kamu, <span style="color:var(--green-bright)">milik kamu.</span><br/>Titik.</h2>
+    <p class="s-sub fu">JOMP dibangun dengan prinsip sederhana: asisten yang tidak ganjen, aman, amanah, dan terpercaya. Bukan aplikasi yang "menjual" datamu.</p>
+
+    <div class="trust-grid">
+      <div class="trust-card fu">
+        <span class="trust-icon">🔒</span>
+        <h3>Data Tersimpan di Google-mu</h3>
+        <p>Semua catatan, task, dan data tersimpan di Google Sheets milikmu sendiri. Bukan di server JOMP. Kamu bisa lihat, export, atau hapus kapanpun.</p>
+        <span class="trust-tag">Zero Server Storage</span>
+      </div>
+      <div class="trust-card fu">
+        <span class="trust-icon">🛡️</span>
+        <h3>Tidak Ada Akses Tanpa Izin</h3>
+        <p>JOMP hanya merespons pesan dari nomormu. Tidak ada orang lain — bahkan admin JOMP — yang bisa membaca percakapan atau datamu.</p>
+        <span class="trust-tag">Private by Design</span>
+      </div>
+      <div class="trust-card fu">
+        <span class="trust-icon">🔐</span>
+        <h3>Enkripsi End-to-End via WhatsApp</h3>
+        <p>Semua komunikasi terlindungi enkripsi E2E WhatsApp. Tidak ada yang bisa intercept pesanmu di tengah jalan.</p>
+        <span class="trust-tag">WhatsApp E2E Encryption</span>
+      </div>
+      <div class="trust-card fu">
+        <span class="trust-icon">🗑️</span>
+        <h3>Hapus Kapanpun, Tidak Ada Jejak</h3>
+        <p>Mau berhenti pakai? Hapus spreadsheet-mu, dan data hilang sepenuhnya. Tidak ada backup tersembunyi, tidak ada retensi data.</p>
+        <span class="trust-tag">Full Data Control</span>
+      </div>
+      <div class="trust-card fu">
+        <span class="trust-icon">🚫</span>
+        <h3>Tidak Ada Iklan, Tidak Ada Tracking</h3>
+        <p>JOMP tidak punya kepentingan komersial dari datamu. Tidak ada profiling, tidak ada data dijual ke pihak ketiga.</p>
+        <span class="trust-tag">No Ads · No Tracking</span>
+      </div>
+      <div class="trust-card fu">
+        <span class="trust-icon">📖</span>
+        <h3>Transparan Sepenuhnya</h3>
+        <p>Kamu tahu persis data apa yang disimpan dan di mana. Tidak ada black box. Spreadsheet terbuka dan bisa kamu audit sendiri.</p>
+        <span class="trust-tag">Full Transparency</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- FEATURES -->
+<section class="feat-section" id="fitur">
+  <div class="container">
+    <p class="s-label fu">Fitur</p>
+    <h2 class="s-title fu">Semua yang kamu butuhkan,<br/>satu nomor WA.</h2>
+    <p class="s-sub fu">3 fitur aktif. 3 dalam pengembangan. Semuanya gratis untuk beta user.</p>
+    <div class="feat-grid">
+
+      <div class="feat-card live fu">
+        <div class="feat-badge badge-live">● Aktif Sekarang</div>
+        <span class="feat-emoji">📋</span>
+        <h3>Task Manager</h3>
+        <p>Catat, update, lacak, dan prioritas semua to-do langsung dari WA. JOMP kasih alert kalau deadline mau lewat.</p>
+        <div class="feat-examples">
+          <div class="feat-ex">"tambahin task: follow up vendor besok sore"</div>
+          <div class="feat-ex">"update TSK-008 jadi selesai"</div>
+          <div class="feat-ex">"task urgent apa hari ini?"</div>
+        </div>
+      </div>
+
+      <div class="feat-card live fu">
+        <div class="feat-badge badge-live">● Aktif Sekarang</div>
+        <span class="feat-emoji">📅</span>
+        <h3>Calendar & Reminder</h3>
+        <p>Sync Google Calendar. Digest pagi jam 7, reminder H-1, dan reminder 1 jam sebelum event. Tidak ada meeting yang terlewat lagi.</p>
+        <div class="feat-examples">
+          <div class="feat-ex">"ada meeting apa besok?"</div>
+          <div class="feat-ex">🌤 Digest otomatis jam 07:00 WIB</div>
+          <div class="feat-ex">⏰ Reminder 1 jam sebelum event</div>
+        </div>
+      </div>
+
+      <div class="feat-card live fu">
+        <div class="feat-badge badge-live">● Aktif Sekarang</div>
+        <span class="feat-emoji">📓</span>
+        <h3>Smart Notes</h3>
+        <p>Ide muncul jam 2 pagi? Langsung catat. JOMP otomatis kasih judul, kategori, dan keywords. Mudah dicari kapanpun.</p>
+        <div class="feat-examples">
+          <div class="feat-ex">"catat ide: bundling produk Ramadan"</div>
+          <div class="feat-ex">"simpan insight dari meeting tadi"</div>
+          <div class="feat-ex">"cari catatan tentang Gastronix"</div>
+        </div>
+      </div>
+
+      <div class="feat-card soon fu">
+        <div class="feat-badge badge-soon">◐ Coming Soon</div>
+        <span class="feat-emoji">💰</span>
+        <h3>Finance Tracker</h3>
+        <p>Catat pemasukan dan pengeluaran dari WA. Summary harian, mingguan, bulanan. Tahu ke mana uangmu pergi tanpa ribet.</p>
+        <div class="feat-examples">
+          <div class="feat-ex">"pengeluaran: makan siang 45rb"</div>
+          <div class="feat-ex">"income dari klien 5 juta"</div>
+          <div class="feat-ex">"summary keuangan minggu ini"</div>
+        </div>
+      </div>
+
+      <div class="feat-card soon fu">
+        <div class="feat-badge badge-soon">◐ Coming Soon</div>
+        <span class="feat-emoji">🌱</span>
+        <h3>Habits & Daily Check-in</h3>
+        <p>Track kebiasaan harian dan ritual pagi/malam. JOMP pantau streak dan ingatkan sebelum hari berlalu begitu saja.</p>
+        <div class="feat-examples">
+          <div class="feat-ex">"morning check-in: olahraga ✓ baca ✓"</div>
+          <div class="feat-ex">"lihat streak habit minggu ini"</div>
+          <div class="feat-ex">"evening review: highlight hari ini"</div>
+        </div>
+      </div>
+
+      <div class="feat-card soon fu">
+        <div class="feat-badge badge-soon">◐ Coming Soon</div>
+        <span class="feat-emoji">🪞</span>
+        <h3>Time Mirroring</h3>
+        <p>Tau nggak waktu kamu beneran kemana? JOMP ping setiap 15 menit, kamu balas satu baris, dan di akhir sesi kamu dapat laporan jujur: seberapa produktif harimu — tanpa manipulasi, tanpa rekayasa.</p>
+        <div class="feat-examples">
+          <div class="feat-ex">"mulai time mirroring 3 hari dari jam 8 pagi"</div>
+          <div class="feat-ex">⏱ JOMP: "Lagi ngapain sekarang?"</div>
+          <div class="feat-ex">"bandingkan batch 1 vs batch 2"</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- HOW IT WORKS -->
+<section id="cara-kerja">
+  <div class="container">
+    <div class="how-wrap">
+      <div>
+        <p class="s-label fu">Cara Kerja</p>
+        <h2 class="s-title fu">Mulai dalam<br/>5 menit.</h2>
+        <p class="s-sub fu">Tidak ada tutorial panjang. Tidak ada setup hari. Daftar, dapat nomor JOMP, langsung pakai.</p>
+        <div class="how-steps">
+          <div class="how-step fu">
+            <div class="step-n">1</div>
+            <div>
+              <h4>Isi form di bawah</h4>
+              <p>Nama, nomor WA, dan email Google. Selesai dalam 2 menit.</p>
+            </div>
+          </div>
+          <div class="how-step fu">
+            <div class="step-n">2</div>
+            <div>
+              <h4>Setup dalam 24 jam</h4>
+              <p>Tim JOMP menyiapkan akun pribadimu. Spreadsheet khusus milikmu dibuat dan dikonfigurasi.</p>
+            </div>
+          </div>
+          <div class="how-step fu">
+            <div class="step-n">3</div>
+            <div>
+              <h4>Simpan nomor JOMP</h4>
+              <p>Kamu dapat nomor WA JOMP. Simpan di kontak, langsung bisa chat.</p>
+            </div>
+          </div>
+          <div class="how-step fu">
+            <div class="step-n">4</div>
+            <div>
+              <h4>Chat biasa, hidup lebih terurus</h4>
+              <p>Tidak ada learning curve. Cukup ketik seperti chat ke teman. JOMP yang urus sisanya.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wa-mockup fu">
+        <div class="wa-top">
+          <div class="wa-av">J</div>
+          <div>
+            <div class="wa-nm">JOMP AI</div>
+            <div class="wa-st">● online · asisten pribadimu</div>
+          </div>
+        </div>
+        <div class="wa-body wa-bg">
+          <div class="bbl bbl-out">tambahin task: follow up proposal pak dede besok sore, penting</div>
+          <div class="bbl bbl-in">
+            ✅ <strong>Task tersimpan!</strong><br/>
+            📋 TSK-022 — Follow up proposal Pak Dede<br/>
+            📅 Besok sore · 🔴 Urgent<br/><br/>
+            Deadline jam berapa? ⏰
+            <div class="bbl-t">09.14 ✓✓</div>
+          </div>
+          <div class="bbl bbl-out">catat ide: bikin bundling produk khusus B2B untuk kuartal 3</div>
+          <div class="bbl bbl-in">
+            📓 <strong>Catatan tersimpan!</strong><br/>
+            NTE-031 — Bundling B2B Kuartal 3<br/>
+            🏷 <em>bisnis · strategi · ide</em>
+            <div class="bbl-t">10.02 ✓✓</div>
+          </div>
+          <div class="bbl bbl-in">
+            🌤 <strong>JOMP Daily Digest</strong><br/>
+            Kamis, 17 April 2026<br/><br/>
+            📅 Agenda: 2 meeting<br/>
+            📋 Tasks urgent: 3 item<br/><br/>
+            Semangat! 💪
+            <div class="bbl-t">07.00 ✓✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- FORM -->
+<section class="form-section" id="daftar">
+  <div class="container">
+    <div class="form-center">
+      <div class="form-head fu">
+        <p class="s-label">Daftar Beta</p>
+        <h2 class="s-title">Gratis. Terbatas.<br/>20 orang pertama.</h2>
+        <p style="color:var(--sub); font-size:0.9rem; margin-top:8px;">Setup dalam 24 jam. Tidak ada kartu kredit. Tidak ada syarat.</p>
+      </div>
+
+      <div class="form-card fu">
+        <div id="form-content">
+          <form id="jomp-form" onsubmit="handleSubmit(event)">
+
+            <div class="f-row">
+              <label>Nama Panggilan <span class="r">*</span></label>
+              <input type="text" id="nama" placeholder="Contoh: Budi, Rina, Pak Eko" required />
+            </div>
+
+            <div class="f-row">
+              <label>Nomor WhatsApp <span class="r">*</span></label>
+              <input type="tel" id="wa" placeholder="+62812xxxxxxxx atau 0812xxxxxxxx" required />
+            </div>
+
+            <div class="f-row">
+              <label>Email Google <span class="r">*</span></label>
+              <input type="email" id="email" placeholder="nama@gmail.com — untuk sinkronisasi data pribadimu" required />
+            </div>
+
+            <div class="f-row">
+              <label>Timezone</label>
+              <select id="tz">
+                <option value="WIB">WIB — Jakarta, Bandung, Surabaya</option>
+                <option value="WITA">WITA — Bali, Makassar</option>
+                <option value="WIT">WIT — Jayapura, Ambon</option>
+              </select>
+            </div>
+
+            <div class="f-row">
+              <label>Fitur yang paling kamu butuhkan <span class="r">*</span></label>
+              <div class="check-group" id="cg">
+                <div class="c-item" onclick="tc(this)">
+                  <input type="checkbox" value="tasks" />
+                  <div class="c-box"></div>
+                  <span class="c-lbl">📋 Task Manager</span>
+                </div>
+                <div class="c-item" onclick="tc(this)">
+                  <input type="checkbox" value="calendar" />
+                  <div class="c-box"></div>
+                  <span class="c-lbl">📅 Calendar & Reminder</span>
+                </div>
+                <div class="c-item" onclick="tc(this)">
+                  <input type="checkbox" value="notes" />
+                  <div class="c-box"></div>
+                  <span class="c-lbl">📓 Smart Notes</span>
+                </div>
+                <div class="c-item" onclick="tc(this)">
+                  <input type="checkbox" value="finance" />
+                  <div class="c-box"></div>
+                  <span class="c-lbl">💰 Finance Tracker</span>
+                </div>
+                <div class="c-item" onclick="tc(this)">
+                  <input type="checkbox" value="habits" />
+                  <div class="c-box"></div>
+                  <span class="c-lbl">🌱 Habits Check-in</span>
+                </div>
+                <div class="c-item" onclick="tc(this)">
+                  <input type="checkbox" value="time-mirroring" />
+                  <div class="c-box"></div>
+                  <span class="c-lbl">🪞 Time Mirroring</span>
+                </div>
+                <div class="c-item" onclick="tc(this)">
+                  <input type="checkbox" value="all" />
+                  <div class="c-box"></div>
+                  <span class="c-lbl">🔥 Semua Fitur</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="f-row">
+              <label>Situasimu sekarang <span style="color:var(--sub2)">(opsional — bantu kami setup yang paling cocok)</span></label>
+              <textarea id="cerita" placeholder="Contoh: Saya pengusaha yang susah manage follow-up klien. Banyak task hilang begitu saja..."></textarea>
+            </div>
+
+            <button type="submit" class="f-submit">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Daftar via WhatsApp
+            </button>
+            <p class="f-note">Setelah klik, WhatsApp terbuka dengan pesan siap kirim. Tinggal tekan send — tidak perlu isi ulang apapun.</p>
+
+          </form>
+        </div>
+
+        <div class="success-state" id="ss">
+          <span class="s-icon">🎉</span>
+          <h3>Hampir selesai!</h3>
+          <p>Klik tombol di bawah untuk kirim pendaftaranmu. Setup akan selesai dalam 24 jam dan kamu dapat nomor JOMP langsung ke WA.</p>
+          <a href="#" id="wa-link" class="wa-link" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Buka WhatsApp & Kirim
+          </a>
+          <p style="margin-top: 16px; font-size: 0.75rem; color: var(--sub2);">Sudah kirim? Pantau WA-mu — konfirmasi dan nomor JOMP akan masuk dalam 24 jam.</p>
+        </div>
+      </div>
+
+      <p style="text-align:center; font-size:0.75rem; color:var(--sub2); margin-top:20px;">
+        🔒 Data form ini hanya diterima oleh admin JOMP AI dan tidak disimpan di server manapun.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">JOMP<span> AI</span></div>
+  <p>Asisten Pribadi 24/7 via WhatsApp</p>
+  <p style="margin-top: 12px;">
+    <strong>Tidak ganjen. Aman. Amanah. Terpercaya.</strong>
+  </p>
+  <p style="margin-top: 8px;">Data kamu, milik kamu. Selalu.</p>
+</footer>
+
+<script>
+  // scroll animations
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+
+  // checkbox
+  function tc(el) {
+    el.classList.toggle('on');
+    const cb = el.querySelector('input');
+    cb.checked = !cb.checked;
+  }
+
+  // submit
+  function handleSubmit(e) {
+    e.preventDefault();
+    const nama = document.getElementById('nama').value.trim();
+    const wa = document.getElementById('wa').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const tz = document.getElementById('tz').value;
+    const cerita = document.getElementById('cerita').value.trim();
+    const checked = [...document.querySelectorAll('#cg .c-item.on')]
+      .map(el => el.querySelector('.c-lbl').textContent.trim());
+
+    if (!nama || !wa || !email || checked.length === 0) {
+      alert('Lengkapi nama, nomor WA, email, dan pilih minimal 1 fitur ya!');
+      return;
+    }
+
+    const msg = `Halo! Mau daftar JOMP AI Beta 🙌
+
+*Nama:* ${nama}
+*WA:* ${wa}
+*Email:* ${email}
+*Timezone:* ${tz}
+*Fitur:* ${checked.join(', ')}
+${cerita ? `*Situasi:* ${cerita}` : ''}
+
+Siap di-setup! 🚀`;
+
+    // ← Ganti dengan nomor WA admin JOMP (format: 62xxx tanpa + atau spasi)
+    const adminWA = '6281234567890';
+    document.getElementById('wa-link').href = `https://wa.me/${adminWA}?text=${encodeURIComponent(msg)}`;
+    document.getElementById('form-content').style.display = 'none';
+    document.getElementById('ss').style.display = 'block';
+  }
+</script>
+</body>
+</html>
